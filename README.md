@@ -35,3 +35,50 @@ a frontend integration UI, and unit tests. The solution is built to be concise, 
 - Validate redirect URI in HubSpot app to match `HUBSPOT_REDIRECT_URI`.
 
 ## Environment variables
+HUBSPOT_CLIENT_ID=...
+HUBSPOT_CLIENT_SECRET=...
+HUBSPOT_REDIRECT_URI=http://localhost:8000/api/integrations/oauth2callback/hubspot
+
+FRONTEND_SUCCESS_URL=http://localhost:3000/integrations?connected=hubspot
+
+REDIS_URL=redis://localhost:6379/0
+
+
+## Run locally
+1. Start Redis:
+   - `redis-server` (or use Docker: `docker run -p 6379:6379 redis`)
+2. Backend:
+   - `cd backend`
+   - `pip install -r requirements.txt` (include: fastapi, uvicorn, requests, redis, pydantic, pytest)
+   - `uvicorn main:app --reload`
+3. Frontend:
+   - `cd frontend`
+   - `npm install`
+   - `npm start`
+4. Use the UI: Connect HubSpot -> Accept consent -> Backend stores tokens -> Frontend Load Items.
+
+## API Reference
+- `GET /api/integrations/authorize/hubspot`  
+  Initiates OAuth and redirects to HubSpot.
+- `GET /api/integrations/oauth2callback/hubspot?code=...&state=...`  
+  OAuth callback. Exchanges code and stores credentials.
+- `GET /api/integrations/items/hubspot`  
+  If authenticated: returns items for `request.state.user`. Otherwise use `?state=<state>`.
+
+## Tests
+- Run tests: `pytest -q`
+- Tests cover token refresh and object fetching logic with mocks.
+
+## Files of interest
+- `backend/integrations/hubspot.py`
+- `backend/api/integrations.py`
+- `frontend/src/integrations/hubspot.js`
+- `backend/tests/test_hubspot.py`
+
+## Limitations & Future improvements
+- Production credential storage (encrypted DB) + rotation.
+- More granular scopes & property selection UI.
+- Rate-limit handling (exponential backoff with retries).
+- Pagination UI in frontend.
+- End-to-end tests using a test HubSpot account.
+
