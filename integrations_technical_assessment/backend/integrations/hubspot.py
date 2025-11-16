@@ -1,11 +1,3 @@
-# backend/integrations/hubspot.py
-"""
-HubSpot integration module.
-Provides:
-- authorize_hubspot(request): Redirects to HubSpot OAuth screen (state stored).
-- oauth2callback_hubspot(request): Handles callback, exchanges code for tokens, stores creds.
-- get_items_hubspot(user_id=None, state_key=None): Returns list of IntegrationItem dicts for Contacts, Companies, Deals.
-"""
 
 from __future__ import annotations
 
